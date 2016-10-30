@@ -1,0 +1,196 @@
+﻿@model Ajax_IMEC.Models.ModeloIntermedio
+
+@{
+    ViewBag.Title = "AJAX";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function insertar()
+    {
+
+        $.ajax({
+            url: '@Url.Action("insertarPersona")',
+            type: "POST",
+            data: 'nombre=' + $("#modeloPersona_nombre").val() + '&apellido1=' + $("#modeloPersona_apellido1").val() + '&cedula=' + $("#modeloPersona_cedula").val() + '&carne=' + $("#modeloPersona_carne").val() + '&sexo=' + $("#modeloPersona_sexo").val() + '&fechaNac=' + $("#modeloPersona_fechaNac").val(),
+            success: function(data) {
+                $('#tablaPersonas tr:last').after(data);
+            },
+        });
+    }
+
+    function editar(cedula)
+    {
+        $('.modificar').empty();
+
+        $.ajax({
+            url: '@Url.Action("modificarPersona")',
+            type: "GET",
+            data: 'cedula=' + cedula,
+            success: function (data) {
+                $('.modificar').append(data);
+            },
+        });
+
+        $('.modificar').show();
+        $('.insertar').hide();
+    }
+
+    function cancelarModificar()
+    {
+        $('.modificar').hide();
+        $('.insertar').show();
+    }
+
+    function guardarCambios(cedula)
+    {
+        $.ajax({
+            url: '@Url.Action("guardarCambiosPersona")',
+            type: "POST",
+            data: 'nombre=' + $("#modificar_nombre").val() + '&apellido1=' + $("#modificar_apellido1").val() + '&cedula=' + cedula + '&carne=' + $("#modificar_carne").val() + '&sexo=' + $("#modificar_sexo").val() + '&fechaNac=' + $("#modificar_fechaNac").val(),
+
+            success: function (data) {
+                $('#' + cedula).remove();
+                $('#tablaPersonas tr:last').after(data);
+            },
+        });
+    }
+
+    function eliminar(cedula)
+    {
+       var respuesta = confirm('Confirma que desea eliminar a esta persona del sistema?');
+
+        if (respuesta == true)
+        {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("eliminarPersona")',
+                data: 'cedula=' + cedula,
+                success: function (result) {
+                    if (result.success)
+					{
+						alert('Persona eliminada con éxito');
+						$('#' + cedula).remove();
+					}
+                },
+            });
+        }
+    }
+
+</script>
+
+<h2>IMEC Completo</h2>
+
+<div class="insertar">
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.nombre, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.modeloPersona.nombre, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.modeloPersona.nombre, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.apellido1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.modeloPersona.apellido1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.modeloPersona.apellido1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+     
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.cedula, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.modeloPersona.cedula, new {  htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.modeloPersona.cedula, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.carne, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.modeloPersona.carne, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.modeloPersona.carne, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.sexo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.modeloPersona.sexo, new { id = "modeloPersona_sexo" })
+                    @Html.ValidationMessageFor(model => model.modeloPersona.sexo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.modeloPersona.fechaNac, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" name="fechaNac" id="modeloPersona_fechaNac">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <a class="btn btn-default" onclick="insertar()">Insertar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modificar">
+
+</div>
+
+    <div class="lista">
+        <table class="table" id="tablaPersonas">
+            <tr>
+                <th>
+                    Nombre
+                </th>
+                <th>
+                    Apellido 1
+                </th>
+                <th>
+                    Carne
+                </th>
+                <th>
+                    Sexo
+                </th>
+                <th>
+                    Fecha Nacimiento
+                </th>
+            </tr>
+
+            @for (int i = 0; i < Model.listaPersonas.Count; i++)
+            {
+
+                <tr id="@(Model.listaPersonas.ElementAt(i).cedula)">
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(i).nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(i).apellido1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(i).carne)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(i).sexo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(i).fechaNac)
+                    </td>
+
+                    <td>
+                        <a class="btn btn-default" onclick="editar('@(Model.listaPersonas.ElementAt(i).cedula)');">Editar</a>
+                        <a class="btn btn-default" onclick="eliminar('@(Model.listaPersonas.ElementAt(i).cedula)');">Eliminar</a>
+                    </td>
+                </tr>
+
+            }
+
+        </table>
+    </div>

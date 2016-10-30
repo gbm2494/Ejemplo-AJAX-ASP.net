@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Ajax_IMEC.Models.persona>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Nombre
+        </th>
+        <th>
+            Apellido 1
+        </th>
+        <th>
+            Carne
+        </th>
+        <th>
+            Sexo
+        </th>
+        <th>
+            Fecha nacimiento
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.apellido1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.apellido2)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.carne)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sexo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fechaNac)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.id)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.cedula }) |
+            @Html.ActionLink("Details", "Details", new { id=item.cedula }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.cedula })
+        </td>
+    </tr>
+}
+
+</table>

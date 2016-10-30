@@ -1,0 +1,27 @@
+﻿@model Ajax_IMEC.Models.ModeloIntermedio
+@{
+    Layout = null;
+}
+
+<tr id="@(Model.listaPersonas.ElementAt(0).cedula)">
+    <td>
+        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(0).nombre)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(0).apellido1)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(0).carne)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(0).sexo)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.listaPersonas.ElementAt(0).fechaNac)
+    </td>
+
+    <td>
+        <a class="btn btn-default" onclick="editar('@(Model.listaPersonas.ElementAt(0).cedula)'));">Editar</a>
+        <a class="btn btn-default" onclick="eliminar('@(Model.listaPersonas.ElementAt(0).cedula)');">Eliminar</a>
+    </td>
+</tr>
